@@ -1,4 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:rick_and_morty/trash/query.dart';
+import 'package:rick_and_morty/test.dart';
+import 'package:rick_and_morty/widgets/list.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+
+final Link apiLink = HttpLink('https://rickandmortyapi.com/api');
+
+ValueNotifier<GraphQLClient> client = ValueNotifier(
+  GraphQLClient(
+    link: HttpLink('https://rickandmortyapi.com/graphql'),
+    cache: GraphQLCache(dataIdFromObject: null),
+  )
+);
 
 void main() {
   runApp(const MyApp());
@@ -10,21 +23,27 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+    return GraphQLProvider(
+      client: client,
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.red,
+              foregroundColor: Color.fromARGB(255, 255, 255, 255),
+            ),
+            // This is the theme of your application.
+            //
+            // Try running your application with "flutter run". You'll see the
+            // application has a blue toolbar. Then, without quitting the app, try
+            // changing the primarySwatch below to Colors.green and then invoke
+            // "hot reload" (press "r" in the console where you ran "flutter run",
+            // or simply save your changes to "hot reload" in a Flutter IDE).
+            // Notice that the counter didn't reset back to zero; the application
+            // is not restarted.
+          ),
+          home: const Test(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -113,3 +132,71 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+// class Episodes extends StatelessWidget {
+//   const Episodes({super.key});
+
+//   @override
+//     Widget build(BuildContext context) {
+//         return Query(
+//             options: QueryOptions(
+//                 document: gql(readEpisodes),
+//                 // ignore: prefer_const_literals_to_create_immutables
+//                 variables: {
+//                 'page': 1,
+//                 },
+//                 pollInterval: const Duration(seconds: 10),
+//             ),
+//             builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }) {
+//               if (result.hasException) {
+//                   return Text(result.exception.toString());
+//               }
+
+//               if (result.isLoading) {
+//                 return const Text('Loading');
+//               }
+
+//               List? repositories = result.data?['viewer']?['repositories']?['nodes'];
+
+//               if (repositories == null) {
+//                 return const Text('No repositories');
+//               }
+
+//               return ListView.builder(
+//                 itemCount: repositories.length,
+//                 itemBuilder: (context, index) {
+//                   final repository = repositories[index];
+
+//                   return Text(repository['name'] ?? '');
+//               });
+//             },
+
+
+//             final Map pageInfo = result.data['search']['pageInfo'];
+//             final String fetchMoreCursor = pageInfo['endCursor'];
+
+//             /// **NOTE**: with the addition of strict data structure checking in v4,
+//             /// it is easy to make mistakes in writing [updateQuery].
+//             ///
+//             /// To mitigate this, [FetchMoreOptions.partial] has been provided.
+//             FetchMoreOptions opts = FetchMoreOptions(
+//               variables: {'cursor': fetchMoreCursor},
+//               updateQuery: (previousResultData, fetchMoreResultData) {
+//                 // this function will be called so as to combine both the original and fetchMore results
+//                 // it allows you to combine them as you would like
+//                 final List<dynamic> repos = [
+//                   ...previousResultData['search']['nodes'] as List<dynamic>,
+//                   ...fetchMoreResultData['search']['nodes'] as List<dynamic>
+//                 ];
+
+//                 // to avoid a lot of work, lets just update the list of repos in returned
+//                 // data with new data, this also ensures we have the endCursor already set
+//                 // correctly
+//                 fetchMoreResultData['search']['nodes'] = repos;
+
+//                 return fetchMoreResultData;
+//               },
+//             );
+//           );
+//     }
+// }
