@@ -1,4 +1,5 @@
-query GetEpisodes ($page: Int) {
+String readEpisodes = r'''
+  query GetEpisodes ($page: Int) {
       episodes (page: $page) {
         info {
           pages
@@ -19,4 +20,16 @@ query GetEpisodes ($page: Int) {
         }
     }
 }
-    
+''';
+
+String episodeCharacters = r'''
+  query episodeCharacters($episode: [ID!]!) {
+ 	episodesByIds(ids: $episode) {
+    episode
+    characters {
+      name
+      image
+    }
+	}
+}
+''';

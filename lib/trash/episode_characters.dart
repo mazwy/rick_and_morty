@@ -1,12 +1,21 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:rick_and_morty/data/episodes.dart';
 import 'package:flutter/material.dart';
+import 'package:rick_and_morty/trash/query.dart';
+
+final Link apiLink = HttpLink('https://rickandmortyapi.com/graphql');
+
+ValueNotifier<GraphQLClient> client = ValueNotifier(
+  GraphQLClient(
+    link: HttpLink('https://rickandmortyapi.com/graphql'),
+    cache: GraphQLCache(store: HiveStore()),
+  )
+);
 
 class EpisodeCharacters  {
   EpisodeCharacters() {
     Query(
       options: QueryOptions(
-        document: gql(episodesList), // this is the query string you just created
+        document: gql(readEpisodes), // this is the query string you just created
         // ignore: prefer_const_literals_to_create_immutables
         variables: {
           'page': 1,
@@ -40,6 +49,5 @@ class EpisodeCharacters  {
       },
     );
   }
-
-  
 }
+
