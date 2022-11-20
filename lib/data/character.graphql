@@ -1,4 +1,4 @@
-query getCharacter($id: ID!) {
+query GetCharacter($id: ID!) {
   character(id: $id) {
     id 
     status

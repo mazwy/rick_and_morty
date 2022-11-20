@@ -1,6 +1,8 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:rick_and_morty/trash/query.dart';
+import '../data/character.graphql.dart';
+import '../data/episodes.graphql.dart';
 
 final Link apiLink = HttpLink('https://rickandmortyapi.com/graphql');
 
