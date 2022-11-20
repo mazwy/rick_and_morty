@@ -1,0 +1,1 @@
+String apiUrl = "https://rickandmortyapi.com/graphql";
