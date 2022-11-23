@@ -41,43 +41,80 @@ class _EpisodesList extends State<EpisodesList> {
             'Rick and Morty Flutter App',
           ),
         )),
-        body: Query(
-          options: QueryOptions(
-            document: gql(allEpisodesQuery),
-            ),
-          builder: (
-            QueryResult result, {
-            Refetch? refetch,
-            FetchMore? fetchMore,
-          }) {
-            if (result.hasException) {
-              return Text(result.exception.toString());
-            }
-            if (result.isLoading || result.data == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        body:
+            Query(
+              options: QueryOptions(
+                document: gql(allEpisodesQuery)
+              ),
+              builder: (QueryResult result, {refetch, fetchMore}) {
+                if (result.isLoading && result.data == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-            FetchMoreOptions nextPage = FetchMoreOptions(
-              variables: {
-                'page' : page
-              },
-              updateQuery: (previousResultData, fetchMoreResultData) {
-                final List<dynamic> moreResult = [
-                  ...previousResultData?['episodes']['results'] as List<dynamic>,
-                  ...fetchMoreResultData?['episodes']['results'] as List<dynamic>
-                ];
+                if (result.hasException) {
+                  return const Text('\nErrors: \n');
+                }
 
-                fetchMoreResultData?['episodes']['results'] = moreResult;
+                if (result.data == null && !result.hasException) {
+                  return const Text(
+                      'Both data and errors are null, this is a known bug after refactoring, you might forget to set Github token');
+                }
 
-                return fetchMoreResultData;
-              },
-            );
+                List? results = result.data?['episodes']?['results'];
 
-            List? results = result.data?['episodes']?['results'];
+                if (results == null) {
+                  return const Text('no results');
+                }
 
-            if (results == null) {
-              return const Text('no results');
-            }
+                final Map? pageInfo = result.data?['episodes']['info'];
+                final String? fetchMoreCursor = pageInfo?['next'];
+
+                FetchMoreOptions nextPage = FetchMoreOptions(
+                  variables: {
+                    'page' : page
+                  },
+                  updateQuery: (previousResultData, fetchMoreResultData) {
+                    final List<dynamic> moreResult = [
+                      ...previousResultData?['episodes']['results'] as List<dynamic>,
+                      ...fetchMoreResultData?['episodes']['results'] as List<dynamic>
+                    ];
+
+                    fetchMoreResultData?['episodes']['results'] = moreResult;
+
+                    return fetchMoreResultData;
+                  },
+                );
+
+                // _controller.addListener(() {
+                //     if (_controller.position.pixels ==
+                //         _controller.position.maxScrollExtent) {
+                //       if (!result.isLoading && page <= 3) {
+                //         fetchMore!(nextPage);
+                //         page++;
+                //       }
+                //     }
+                //   }
+                // );
+
+              //   return Expanded(
+              //     child: ListView.builder(
+              //       controller: _controller,
+              //       itemCount: results.length,
+              //       itemBuilder: (context, index) {
+              //         if (result.isLoading) {
+              //           Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: const <Widget>[
+              //               CircularProgressIndicator(),
+              //             ],
+              //           );
+              //         }
+              //         return EpisodeTile(results, index);
+              //     }
+              //   )
+              // );
 
             return NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
@@ -95,6 +132,7 @@ class _EpisodesList extends State<EpisodesList> {
               itemBuilder: (context, index) {
                 return EpisodeTile(results, index);
             }));
+
           }),
         ),
       );
