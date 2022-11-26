@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:rick_and_morty/all_episodes/episodes__list_tile.dart';
+import 'package:rick_and_morty/all_episodes/episode_card.dart';
 import 'package:rick_and_morty/queries.dart';
 
 class EpisodesList extends StatefulWidget {
@@ -34,10 +34,10 @@ class _EpisodesList extends State<EpisodesList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(58, 66, 86, 1.0),
+      backgroundColor: const Color.fromARGB(255, 42, 48, 62),
       appBar: AppBar(
-          elevation: 0.1,
-          backgroundColor: const Color.fromRGBO(58, 66, 86, 1.0),
+          elevation: 5,
+          backgroundColor: const Color.fromARGB(255, 35, 40, 53),
           title: const Center(
             child: Text(
               'Rick and Morty Flutter App',
@@ -94,9 +94,9 @@ class _EpisodesList extends State<EpisodesList> {
                 },
                 child: ListView.builder(
                     controller: _controller,
-                    itemCount: results.length,
+                    itemCount: 51,
                     itemBuilder: (context, index) {
-                      return EpisodeTile(results, index);
+                      return EpisodeCard(results: results, index: index);
                     }));
           }),
     );
