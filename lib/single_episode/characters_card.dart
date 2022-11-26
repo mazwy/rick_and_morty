@@ -19,33 +19,33 @@ class CharacterCard extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(55)),
             child: GridTile(
-                header: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: <Color>[
-                          Colors.black.withOpacity(0.6),
-                          Colors.black.withOpacity(0.2)
-                        ]),
-                  ),
-                  child: Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                        Center(
-                            child: Text(
-                          characters?[index]['name'],
-                          style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ))
-                      ])),
-                ),
+                // header: Container(
+                //   decoration: BoxDecoration(
+                //     gradient: LinearGradient(
+                //         begin: Alignment.topCenter,
+                //         end: Alignment.bottomCenter,
+                //         colors: <Color>[
+                //           Colors.black.withOpacity(0.6),
+                //           Colors.black.withOpacity(0.2)
+                //         ]),
+                //   ),
+                //   child: Expanded(
+                //       child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: <Widget>[
+                //         Center(
+                //             child: Text(
+                //           characters?[index]['name'],
+                //           style: const TextStyle(
+                //               color: Colors.white, fontWeight: FontWeight.bold),
+                //           textAlign: TextAlign.center,
+                //         ))
+                //       ])),
+                // ),
                 child: FittedBox(
-                  fit: BoxFit.fill,
-                  child: Image.network(characters?[index]['image']),
-                )),
+              fit: BoxFit.fill,
+              child: Image.network(characters?[index]['image']),
+            )),
           )),
     );
   }
