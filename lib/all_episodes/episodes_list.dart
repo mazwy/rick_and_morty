@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:rick_and_morty/all_episodes/episodes__list_tile.dart';
+import 'package:rick_and_morty/all_episodes/episode_card.dart';
 import 'package:rick_and_morty/queries.dart';
 
 class EpisodesList extends StatefulWidget {
@@ -34,30 +34,40 @@ class _EpisodesList extends State<EpisodesList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(58, 66, 86, 1.0),
+      backgroundColor: const Color.fromARGB(255, 42, 48, 62),
       appBar: AppBar(
-          elevation: 0.1,
-          backgroundColor: const Color.fromRGBO(58, 66, 86, 1.0),
+          elevation: 5,
+          backgroundColor: const Color.fromARGB(255, 35, 40, 53),
           title: const Center(
             child: Text(
               'Rick and Morty Flutter App',
             ),
           )),
       body: Query(
-          options: QueryOptions(
-            document: gql(allEpisodesQuery),
-          ),
-          builder: (
-            QueryResult result, {
-            Refetch? refetch,
-            FetchMore? fetchMore,
-          }) {
+          options: QueryOptions(document: gql(allEpisodesQuery)),
+          builder: (QueryResult result, {refetch, fetchMore}) {
+            if (result.isLoading && result.data == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
             if (result.hasException) {
-              return Text(result.exception.toString());
+              return const Text('\nErrors: \n');
             }
-            if (result.isLoading || result.data == null) {
-              return const Center(child: CircularProgressIndicator());
+
+            if (result.data == null && !result.hasException) {
+              return const Text('null');
             }
+
+            List? results = result.data?['episodes']?['results'];
+
+            if (results == null) {
+              return const Text('no results');
+            }
+
+            final Map? pageInfo = result.data?['episodes']['info'];
+            final String? fetchMoreCursor = pageInfo?['next'];
 
             FetchMoreOptions nextPage = FetchMoreOptions(
               variables: {'page': page},
@@ -75,20 +85,15 @@ class _EpisodesList extends State<EpisodesList> {
               },
             );
 
-            List? results = result.data?['episodes']?['results'];
-
-            if (results == null) {
-              return const Text('no results');
-            }
-
             return NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
                   if (scrollNotification is ScrollEndNotification &&
                       _controller.position.pixels >=
                           _controller.position.maxScrollExtent &&
-                      page < 4) {
-                    page++;
+                      page < 4 &&
+                      !(results.length > 40)) {
                     fetchMore!(nextPage);
+                    page++;
                   }
                   return true;
                 },
@@ -96,7 +101,7 @@ class _EpisodesList extends State<EpisodesList> {
                     controller: _controller,
                     itemCount: results.length,
                     itemBuilder: (context, index) {
-                      return EpisodeTile(results, index);
+                      return EpisodeCard(results: results, index: index);
                     }));
           }),
     );
