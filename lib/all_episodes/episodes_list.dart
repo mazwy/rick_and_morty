@@ -33,18 +33,20 @@ class _EpisodesList extends State<EpisodesList> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-            title: const Center(
-          child: Text(
-            'Rick and Morty Flutter App',
-          ),
-        )),
-        body: Query(
+    return Scaffold(
+      backgroundColor: const Color.fromRGBO(58, 66, 86, 1.0),
+      appBar: AppBar(
+          elevation: 0.1,
+          backgroundColor: const Color.fromRGBO(58, 66, 86, 1.0),
+          title: const Center(
+            child: Text(
+              'Rick and Morty Flutter App',
+            ),
+          )),
+      body: Query(
           options: QueryOptions(
             document: gql(allEpisodesQuery),
-            ),
+          ),
           builder: (
             QueryResult result, {
             Refetch? refetch,
@@ -58,13 +60,13 @@ class _EpisodesList extends State<EpisodesList> {
             }
 
             FetchMoreOptions nextPage = FetchMoreOptions(
-              variables: {
-                'page' : page
-              },
+              variables: {'page': page},
               updateQuery: (previousResultData, fetchMoreResultData) {
                 final List<dynamic> moreResult = [
-                  ...previousResultData?['episodes']['results'] as List<dynamic>,
-                  ...fetchMoreResultData?['episodes']['results'] as List<dynamic>
+                  ...previousResultData?['episodes']['results']
+                      as List<dynamic>,
+                  ...fetchMoreResultData?['episodes']['results']
+                      as List<dynamic>
                 ];
 
                 fetchMoreResultData?['episodes']['results'] = moreResult;
@@ -80,24 +82,23 @@ class _EpisodesList extends State<EpisodesList> {
             }
 
             return NotificationListener<ScrollNotification>(
-              onNotification: (scrollNotification) {
-                if (scrollNotification is ScrollEndNotification 
-                  && _controller.position.pixels >= _controller.position.maxScrollExtent && page < 4) {
+                onNotification: (scrollNotification) {
+                  if (scrollNotification is ScrollEndNotification &&
+                      _controller.position.pixels >=
+                          _controller.position.maxScrollExtent &&
+                      page < 4) {
                     page++;
                     fetchMore!(nextPage);
-                }
-                return true;
+                  }
+                  return true;
                 },
-            
-            child: ListView.builder(
-              controller: _controller,
-              itemCount: results.length,
-              itemBuilder: (context, index) {
-                return EpisodeTile(results, index);
-            }));
+                child: ListView.builder(
+                    controller: _controller,
+                    itemCount: results.length,
+                    itemBuilder: (context, index) {
+                      return EpisodeTile(results, index);
+                    }));
           }),
-        ),
-      );
-    //);
+    );
   }
 }
