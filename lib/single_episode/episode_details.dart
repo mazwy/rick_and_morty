@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:rick_and_morty/queries.dart';
-import 'package:rick_and_morty/single_episode/characters_card.dart';
+import 'package:rick_and_morty/single_episode/characters__grid_view.dart';
 
 class EpisodeDetails extends StatelessWidget {
   final String? id, episodeTitle, episode;
@@ -24,11 +24,8 @@ class EpisodeDetails extends StatelessWidget {
       body: Query(
         options: QueryOptions(
             document: gql(singleEpisodeQuery), variables: {'id': id}),
-        builder: (
-          QueryResult result, {
-          Refetch? refetch,
-          FetchMore? fetchMore,
-        }) {
+        builder: (QueryResult result,
+            {Refetch? refetch, FetchMore? fetchMore}) {
           if (result.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -42,17 +39,7 @@ class EpisodeDetails extends StatelessWidget {
             return const Text('no results');
           }
 
-          return GridView.builder(
-              padding: const EdgeInsets.all(5),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  crossAxisSpacing: 2,
-                  mainAxisSpacing: 2,
-                  maxCrossAxisExtent: 150,
-                  childAspectRatio: 1),
-              itemCount: characters.length,
-              itemBuilder: (context, index) {
-                return CharacterCard(characters: characters, index: index);
-              });
+          return CharactersGridView(characters: characters);
         },
       ),
     );
