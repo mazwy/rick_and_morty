@@ -1,5 +1,3 @@
-import 'package:graphql_flutter/graphql_flutter.dart';
-
 const String allEpisodesQuery = '''
     query GetEpisodes (\$page: Int) {
       episodes (page: \$page) {
@@ -22,5 +20,3 @@ const String singleEpisodeQuery = '''
     }
   }
 ''';
-
-HttpLink apiLink = HttpLink('https://rickandmortyapi.com/graphql');

@@ -16,7 +16,7 @@ class RickAndMortyApp extends StatelessWidget {
       GraphQLClient(
         cache: GraphQLCache(
             partialDataPolicy: PartialDataCachePolicy.acceptForOptimisticData),
-        link: apiLink,
+        link: HttpLink('https://rickandmortyapi.com/graphql')
       ),
     );
 
