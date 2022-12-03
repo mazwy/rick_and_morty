@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CharacterCard extends StatelessWidget {
+  /// Provides a card for a character in the episode.
+  /// This widget is used in CharactersGridView widget.
+  /// It returns a Card widget.
+  /// The card contains character image.
   final List? characters;
   final int index;
   const CharacterCard(
