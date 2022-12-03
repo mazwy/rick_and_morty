@@ -12,14 +12,14 @@ class RickAndMortyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // gql client setup
     ValueNotifier<GraphQLClient> client = ValueNotifier(
       GraphQLClient(
-        cache: GraphQLCache(
-            partialDataPolicy: PartialDataCachePolicy.acceptForOptimisticData),
+        cache: GraphQLCache(),
         link: apiLink,
       ),
     );
-
+    /// this provides main screen:
     return GraphQLProvider(
         client: client,
         child: MaterialApp(

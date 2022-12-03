@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:rick_and_morty/single_episode/episode_details.dart';
 
 class EpisodeTile extends StatelessWidget {
+  /// Provides a list tile widget for each episode and returns a ListTile widget.
+  /// This widget is used in EpisodeCard widget.
+  /// The tile contains episode name, episode number, and air date (from the Card).
+  /// When the tile is tapped, it navigates to EpisodeDetails widget.
   final List? results;
   final int index;
 
