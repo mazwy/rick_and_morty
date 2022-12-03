@@ -4,6 +4,9 @@ import 'package:rick_and_morty/all_episodes/episode_card.dart';
 import 'package:rick_and_morty/queries.dart';
 
 class QueryBody extends StatefulWidget {
+  /// This is responsible for main Query as well as pagination and scrolling.
+  /// It returns a Query widget.
+  /// The query returns a list of episodes.
   const QueryBody({super.key});
 
   @override
@@ -65,6 +68,7 @@ class _QueryBodyState extends State<QueryBody> {
             },
           );
 
+          /// If the user scrolls to the bottom of the page, the next page is fetched.
           return NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
                 if (scrollNotification is ScrollEndNotification &&

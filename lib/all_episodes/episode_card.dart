@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:rick_and_morty/all_episodes/episodes__list_tile.dart';
 
 class EpisodeCard extends StatelessWidget {
+  /// Provides a card widget for each episode and returns a container with EpisodeListTile widget.
+  /// This widget is used in EpisodesList widget.
+  /// The card contains a Box with a list tile of the episode.
   final List? results;
   final int index;
 

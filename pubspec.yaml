@@ -53,7 +53,8 @@ dev_dependencies:
   graphql_codegen: ^0.11.2
   build_runner: ^2.2.0
   test: ^1.21.4
-  integration_test: ^0.8.1
+  integration_test:
+    sdk: flutter
   mockito: ^5.3.2
   mocktail: ^0.3.0
 

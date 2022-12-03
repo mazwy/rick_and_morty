@@ -2,32 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:rick_and_morty/data/episodes.graphql.dart';
+import 'package:rick_and_morty/all_episodes/episodes_list.dart';
+import 'package:rick_and_morty/all_episodes/query_body.dart';
 import 'package:rick_and_morty/main.dart';
+import 'package:rick_and_morty/single_episode/episode_details.dart';
+
+/*
+
+
+    all mock-related things are down below instead of inside helpers.dart
+    because for some reason it shows errors 'Method not found' as well as
+    'MockGraphQLClient' isn't a type.
+    
+    
+*/
 
 void main() {
+  MockGraphQLClient mockGraphQLClient = generateMockGraphQLClient();
 
-  late MockGraphQLClient mockGraphQLClient = generateMockGraphQLClient();
-
-  setUp(() {
-    MockGraphQLClient mockGraphQLClient = generateMockGraphQLClient();
-  });
-
+  // ignore: no_leading_underscores_for_local_identifiers
   Widget _buildTestScaffold() {
     return GraphQLProvider(
         client: ValueNotifier(mockGraphQLClient),
         child: const MaterialApp(
-          home: Material(
-          child: RickAndMortyApp(),
-        ),
+          home: RickAndMortyApp()
       ),
     );
   }
 
-  group('Profile', () {
+  group('Query', () {
     testWidgets('displays a loading indicator when query is loading',
         (tester) async {
-      final result = generateMockWatchQuery<Query$GetEpisodes>(mockGraphQLClient);
+      final result = generateMockWatchQuery<QueryBody>(mockGraphQLClient);
       when(() => result.isLoading).thenReturn(true);
 
       await tester.pumpWidget(_buildTestScaffold());
@@ -36,35 +42,47 @@ void main() {
     });
 
     testWidgets('renders a message on error', (tester) async {
-      final result = generateMockWatchQuery<String>(mockGraphQLClient);
+      final result = generateMockWatchQuery<QueryBody>(mockGraphQLClient);
       when(() => result.isLoading).thenReturn(false);
       when(() => result.hasException).thenReturn(true);
 
       await tester.pumpWidget(_buildTestScaffold());
-
+      expect(find.byType(Text), findsWidgets);
     });
 
-    // testWidgets('renders the appropriate elements', (tester) async {
-    //   final result = generateMockWatchQuery<String>(mockGraphQLClient);
-    //   when(() => result.isLoading).thenReturn(false);
-    //   when(() => result.hasException).thenReturn(false);
-    //   when(() => result.parsedData).thenReturn(
-    //     Query$UserById(
-    //       getUser: Query$UserById$getUser(
-    //         xid: _userId,
-    //         email: _email,
-    //         displayName: _displayName,
-    //         $__typename: 'user',
-    //       ),
-    //       $__typename: 'getUser',
-    //     ),
-    //   );
+    testWidgets('renders the appropriate elements (1st screen)', (tester) async {
 
-    //   await tester.pumpWidget(_buildTestScaffold());
+      final result = generateMockWatchQuery<QueryBody>(mockGraphQLClient);
+      when(() => result.isLoading).thenReturn(false);
+      when(() => result.hasException).thenReturn(false);
+      when(() => result.parsedData).thenReturn(
+        const QueryBody(),
+      );
 
-    //   expect(find.text(_displayName), findsOneWidget);
-    //   expect(find.text(_email), findsOneWidget);
-    //});
+      await tester.pumpWidget(_buildTestScaffold());
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+      
+      expect(find.byType(QueryBody), findsOneWidget);
+      expect(find.byType(EpisodesList), findsOneWidget);
+      // finds nothing because of offstage widgets
+      expect(find.byType(EpisodeDetails), findsNothing);
+
+      // doesn't work
+      // await tester.pumpAndSettle(const Duration(seconds: 2));
+      // await tester.tapAt(const Offset(297.0, 86.0));
+      // await tester.pumpAndSettle(const Duration(seconds: 2));
+      // expect(find.byType(EpisodeDetails), findsWidgets);
+
+      // expect(find.descendant(of: find.byType(EpisodesList), 
+      //   matching: find.byType(Scaffold), skipOffstage: false), 
+      //   findsWidgets);
+      // // expect(find.descendant(of: find.byType(QueryBody), 
+      // //   matching: find.byType(Query), skipOffstage: false), 
+      // //   findsWidgets);
+      // tester.element(find.byType(QueryBody)).visitChildren((element) => EpisodeCard);
+
+      // expect(find.byType(ListView), findsNothing);
+    });
   });
 }
 
@@ -111,6 +129,7 @@ MockQueryResult<T> generateMockWatchQuery<T>(MockGraphQLClient graphQLClient) {
     () => query.onData(
       any(),
     ),
+  // ignore: void_checks
   ).thenReturn(() {});
   when(() => graphQLClient.watchQuery<T>(any())).thenReturn(query);
 
